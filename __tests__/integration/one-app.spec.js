@@ -859,14 +859,14 @@ describe('Tests that can run against either local Docker setup or remote One App
           await browser.url(`${appInstanceUrls.browserUrl}/demo/cultured-frankie`);
           const greetingMessage = await browser.$('#greeting-message');
           const localeSelector = await browser.$('#locale-selector');
+          await localeSelector.waitForExist();
           await localeSelector.selectByVisibleText('en-CA');
-          await waitFor(200);
+          await greetingMessage.waitForExist();
           expect(await greetingMessage.getText()).toBe(
             'Hello, my name is Frankie and I am in Canada!'
           );
-          await waitFor(200);
           await localeSelector.selectByVisibleText('es-MX');
-          await waitFor(200);
+          await greetingMessage.waitForExist();
           expect(await greetingMessage.getText()).toBe(
             'Hola! Mi nombre es Frankie y estoy en Mexico!'
           );

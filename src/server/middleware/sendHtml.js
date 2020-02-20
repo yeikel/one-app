@@ -272,11 +272,12 @@ export default function sendHtml(req, res) {
       appHtml, clientModuleMapCache, store, headers, helmetInfo = {},
     } = req;
     const { scriptNonce } = res;
-    const userAgent = headers['user-agent'];
-    const isLegacy = !matchesUA(userAgent, {
-      browsers: browserList,
-      allowHigherVersions: true,
-    });
+    // const userAgent = headers['user-agent'];
+    // const isLegacy = !matchesUA(userAgent, {
+    //   browsers: browserList,
+    //   allowHigherVersions: true,
+    // });
+    const isLegacy = false;
 
     console.info(`sendHtml, have store? ${!!store}, have appHtml? ${!!appHtml}`);
     if (appHtml && typeof appHtml !== 'string') {

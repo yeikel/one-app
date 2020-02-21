@@ -13,14 +13,36 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+import http from 'http';
+import https from 'https';
 
-const defaultCreateFetch = () => (fetch) => fetch;
-
-const cache = {
-  createSsrFetch: defaultCreateFetch,
+const baseAgentOptions = {
+  keepAlive: true,
+  keepAliveMsecs: 1000,
+  maxFreeSockets: 5,
+  maxSockets: 100,
 };
 
-export const setCreateSsrFetch = (newFetch = defaultCreateFetch) => {
+export function enhancedSsrFetch() {
+  const httpAgent = new http.Agent(baseAgentOptions);
+
+  const httpsAgent = new https.Agent(baseAgentOptions);
+
+  function selectAgent(urlObject) {
+    if (urlObject.protocol === 'http:') {
+      return httpAgent;
+    }
+    return httpsAgent;
+  }
+
+  return (fetch) => (url, opts) => fetch(url, { ...opts, agent: selectAgent(url) });
+}
+
+const cache = {
+  createSsrFetch: enhancedSsrFetch,
+};
+
+export const setCreateSsrFetch = (newFetch = enhancedSsrFetch) => {
   cache.createSsrFetch = newFetch;
 };
 

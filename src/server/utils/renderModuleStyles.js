@@ -16,12 +16,12 @@
 
 import { getModule } from 'holocron';
 
-export default function renderModuleStyles(store) {
+export default function renderModuleStyles(store, nonce) {
   return store.getState().getIn(['holocron', 'loaded'], [])
     .map((moduleName) => getModule(moduleName, store.modules))
     .filter((module) => !!module.ssrStyles)
     .map((module) => module.ssrStyles.getFullSheet())
     .filter(Boolean)
-    .map((ssrStylesFullSheet) => `<style class="ssr-css">${ssrStylesFullSheet}</style>`)
+    .map((ssrStylesFullSheet) => `<style class="ssr-css" nonce="${nonce}">${ssrStylesFullSheet}</style>`)
     .join('');
 }

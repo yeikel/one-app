@@ -59,6 +59,7 @@ export function getCSP() {
 const csp = () => (req, res, next) => {
   const { policy } = cspCache;
   const scriptNonce = uuidV4();
+  const styleNonce = uuidV4();
   let updatedPolicy;
   if (process.env.NODE_ENV === 'development') {
     const updatedScriptSrc = insertSource(policy, 'script-src', `'nonce-${scriptNonce}' ${ip.address()}:${process.env.HTTP_ONE_APP_DEV_CDN_PORT} localhost:${process.env.HTTP_ONE_APP_DEV_CDN_PORT}`);
@@ -75,8 +76,11 @@ const csp = () => (req, res, next) => {
   } else {
     updatedPolicy = insertSource(policy, 'script-src', `'nonce-${scriptNonce}'`);
   }
+  updatedPolicy = insertSource(updatedPolicy, 'style-src', `'nonce-${styleNonce}'`);
+  updatedPolicy = insertSource(updatedPolicy, 'style-src-elem', `'nonce-${styleNonce}'`);
 
   res.scriptNonce = scriptNonce;
+  res.styleNonce = styleNonce;
   res.setHeader('Content-Security-Policy', updatedPolicy);
   next();
 };

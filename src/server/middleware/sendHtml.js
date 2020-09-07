@@ -193,6 +193,7 @@ export function getHtmlAttributesString(helmetInfo) {
 export function getHead({
   helmetInfo,
   store,
+  styleNonce,
   disableStyles,
   pwaMetadata,
 }) {
@@ -200,7 +201,7 @@ export function getHead({
     <head>
       ${getHelmetString(helmetInfo, disableStyles)}
       ${disableStyles ? '' : `
-      ${renderModuleStyles(store)}
+      ${renderModuleStyles(store, styleNonce)}
       `}
       ${pwaMetadata.webManifestUrl ? `<link rel="manifest" href="${pwaMetadata.webManifestUrl}">` : ''}
     </head>
@@ -284,7 +285,7 @@ export default function sendHtml(req, res) {
     const {
       appHtml, clientModuleMapCache, store, headers, helmetInfo = {}, renderMode = 'hydrate',
     } = req;
-    const { scriptNonce } = res;
+    const { scriptNonce, styleNonce } = res;
     const userAgent = headers['user-agent'];
     const isLegacy = legacyUserAgent(userAgent);
 
@@ -317,6 +318,7 @@ export default function sendHtml(req, res) {
     const headSectionArgs = {
       helmetInfo,
       store,
+      styleNonce,
       disableScripts,
       disableStyles,
       scriptNonce,
